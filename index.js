@@ -22,7 +22,7 @@ app.use(
       "https://justlinklogistics.com.ng",
       "http://localhost:5173",
       "http://localhost:5174",
-      "https://justink-3abh.onrender.com"
+      "https://justink.vercel.app"
     ], 
     credentials: true, 
   })
