@@ -10,7 +10,7 @@ router.get('/vendor/products', authToken, getProductByVendorId);
 router.post('/vendor/new-product', authToken, upload.array("imgs", 3), postProduct);
 router.post('/bookmark/:id', authToken, bookmarkProduct);
 router.delete('/bookmark/:id', authToken, deleteBookmark);
-router.get('/bookmark/:id', authToken, getBookmarks);
+router.get('/bookmark', authToken, getBookmarks);
 router.post('/rating/:id', authToken, rateProduct);
 router.get('/rating/:id', getProductRatings);
 
