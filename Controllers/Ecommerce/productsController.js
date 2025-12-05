@@ -246,11 +246,11 @@ const getProductRatings = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const product = await Product.findById(id).populate("ratings.userId", "name email");
+    const product = await ProductModel.findById(id).populate("ratings.userId", "name email");
     if (!product) return res.status(404).json({ message: "Product not found" });
 
     res.status(200).json({
-      ratings: product.ratings,
+      ratings: product.rating,
       averageRating: product.averageRating,
       ratingCount: product.ratingCount
     });
