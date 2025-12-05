@@ -1,6 +1,13 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
+const ratingSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  rating: { type: Number, required: true, min: 1, max: 5 },
+  review: { type: String }, // optional review text
+  createdAt: { type: Date, default: Date.now }
+});
+
 const ProductSchema = new Schema(
   {
     name: { type: String, required: true },
@@ -19,6 +26,7 @@ const ProductSchema = new Schema(
       ref: "User", // Reference to a Vendor (User model)
       required: true, 
     }, 
+    rating : [ratingSchema]
   },
   { timestamps: true }
 ); 

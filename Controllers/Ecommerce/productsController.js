@@ -1,3 +1,4 @@
+const BookmarkModel = require("../../Models/Ecommerce/Bookmarks");
 const ProductModel = require("../../Models/Ecommerce/Products");
 const uploadToCloudinary = require("../../Utils/Cloudinary/cloudinary");
 
@@ -29,7 +30,7 @@ const getProductById = async (req, res) => {
 };
 
 const getProductByVendorId = async (req, res) => {
-  const {id} = req.user
+  const { id } = req.user;
   try {
     const products = await ProductModel.find({ vendor: id });
     res.status(200).json(products);
@@ -162,11 +163,113 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const bookmarkProduct = async (req, res) => {
+  const userId = req.user.id;
+  const productId = req.params.id;
+  try {
+    const bookmark = await BookmarkModel.create({ userId, productId });
+    res.status(200).json({ message: "Bookmark added successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error Adding product to bookmark");
+  }
+};
+
+const deleteBookmark = async (req, res) => {
+  const userId = req.user.id;
+  const productId = req.params.id;
+
+  try {
+    const bookmark = await BookmarkModel.findOneAndDelete({
+      userId,
+      productId,
+    });
+    res.status(200).json({ message: "Bookmark removed successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error removing product from bookmark");
+  }
+};
+
+const getBookmarks = async (req, res) => {
+  try {
+    const bookmark = await BookmarkModel.find({ userId: req.user.id });
+    res.status(200).json(bookmark);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error fetching bookmarks");
+  }
+};
+
+const rateProduct = async (req, res) => {
+  const { id } = req.params;
+  const { rating, review } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    // Check if the user already rated
+    const existingRatingIndex = product.ratings.findIndex(
+      (r) => r.userId.toString() === userId.toString()
+    );
+
+    if (existingRatingIndex > -1) {
+      // Update existing rating
+      product.ratings[existingRatingIndex].rating = rating;
+      product.ratings[existingRatingIndex].review = review;
+      product.ratings[existingRatingIndex].createdAt = Date.now();
+    } else {
+      // Add new rating
+      product.ratings.push({ userId, rating, review });
+    }
+
+    // Recalculate average rating
+    product.ratingCount = product.ratings.length;
+    product.averageRating =
+      product.ratings.reduce((acc, r) => acc + r.rating, 0) /
+      product.ratingCount;
+
+    await product.save();
+
+    res
+      .status(200)
+      .json({ message: "Rating saved", averageRating: product.averageRating });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getProductRatings = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const product = await Product.findById(id).populate("ratings.userId", "name email");
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    res.status(200).json({
+      ratings: product.ratings,
+      averageRating: product.averageRating,
+      ratingCount: product.ratingCount
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   postProduct,
   editProduct,
   deleteProduct,
   getProducts,
   getProductById,
-  getProductByVendorId
+  getProductByVendorId,
+  bookmarkProduct,
+  deleteBookmark,
+  getBookmarks,
+  rateProduct,
+  getProductRatings
 };

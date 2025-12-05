@@ -3,9 +3,9 @@ const app = express();
 const port = process.env.PORT || 4000; 
 const cors = require("cors")
 const connectDB = require("./Config/dbConfig");
-const cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser");  
 
-
+ 
 require('dotenv').config(); 
 
 // database connection 

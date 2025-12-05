@@ -1,9 +1,3 @@
-// import axios from "axios";
-// import Transaction from "../models/Transaction.js";
-// import Order from "../models/Order.js";
-// import User from "../models/User.js";
-// import sendEmail from "../utils/sendEmail.js";
-
 const { default: axios } = require("axios");
 const TransactionModel = require("../../Models/Ecommerce/Transactions");
 const OrderModel = require("../../Models/Ecommerce/Orders");
