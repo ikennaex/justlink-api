@@ -226,7 +226,7 @@ const rateProduct = async (req, res) => {
     }
 
     // Recalculate average rating
-    product.ratingCount = product.ratings.length;
+    product.ratingCount = product.rating.length;
     product.averageRating =
       product.rating.reduce((acc, r) => acc + r.rating, 0) /
       product.ratingCount;
