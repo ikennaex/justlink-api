@@ -207,28 +207,28 @@ const rateProduct = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const product = await Product.findById(id);
+    const product = await ProductModel.findById(id);
     if (!product) return res.status(404).json({ message: "Product not found" });
 
     // Check if the user already rated
-    const existingRatingIndex = product.ratings.findIndex(
+    const existingRatingIndex = product.rating.findIndex(
       (r) => r.userId.toString() === userId.toString()
     );
 
     if (existingRatingIndex > -1) {
       // Update existing rating
-      product.ratings[existingRatingIndex].rating = rating;
-      product.ratings[existingRatingIndex].review = review;
-      product.ratings[existingRatingIndex].createdAt = Date.now();
+      product.rating[existingRatingIndex].rating = rating;
+      product.rating[existingRatingIndex].review = review;
+      product.rating[existingRatingIndex].createdAt = Date.now();
     } else {
       // Add new rating
-      product.ratings.push({ userId, rating, review });
+      product.rating.push({ userId, rating, review });
     }
 
     // Recalculate average rating
     product.ratingCount = product.ratings.length;
     product.averageRating =
-      product.ratings.reduce((acc, r) => acc + r.rating, 0) /
+      product.rating.reduce((acc, r) => acc + r.rating, 0) /
       product.ratingCount;
 
     await product.save();
